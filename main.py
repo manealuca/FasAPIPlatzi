@@ -19,6 +19,11 @@ class Person(BaseModel):
     
 
 
+class Location(BaseModel):
+    city: str
+    state :str
+    country: str
+
 
 @app.get("/")
 def home():
@@ -47,3 +52,15 @@ def show_person(person_id:int = Path(..., gt=0, title= "Person Id",
                     description= "This is the Person Id its Required")):
     return {person_id:"It Exist!"}
  
+@app.put("/person/{person_id}")
+def update_person(
+    person_id: int = Path(...,
+                          title="Person Id",
+                          description="This is the person id",
+                          gt=0),
+        person:Person = Body(...),
+        location: Location = Body(...)
+        ):
+    results = person.dict()
+    results.update(location.dict())
+    return results

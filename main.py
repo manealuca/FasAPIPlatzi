@@ -21,18 +21,31 @@ class HairColor(Enum):
     
 #Models
 class Person(BaseModel):
-    first_name: str = Field(...,min_lenght = 1,max_lengt=50)
-    last_name: str  = Field(...,min_lenght = 1,max_lengt=50)
-    age: int = Field(...,gt=0,le = 115)
-    hair_color: Optional[HairColor] =Field(default = HairColor.brown)
-    is_married: Optional[bool] = Field(default = None)
-    
+    first_name: str = Field(...,min_lenght = 1,max_lengt=50,example="Luca")
+    last_name: str  = Field(...,min_lenght = 1,max_lengt=50,example="Manea")
+    age: int = Field(...,gt=0,le = 115,example=28)
+    hair_color: Optional[HairColor] =Field(default =None, exaple="black")
+    is_married: Optional[bool] = Field(default = None,example=False)
+#    class Config:
+#        schema_extra = {
+#            "Luca":{
+#                "first_name":"Luca",
+#                "last_name":"Manea",
+#                "age":28,
+#                "hair_color":"brown",
+#                "is_married": False
+#            }
+#        }    
 
 
 class Location(BaseModel):
     city: str
     state :str
     country: str
+
+
+
+
 
 
 @app.get("/")

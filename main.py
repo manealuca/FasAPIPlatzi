@@ -57,31 +57,50 @@ class LoginOut(BaseModel):
 
 
 
-@app.get(path="/",status_code=status.HTTP_200_OK)
+@app.get(path="/",status_code=status.HTTP_200_OK,tags=["Home"])
 def home():
     return {"hello":"world"}
 
  #Reques and Response body
  #Body(...) nos indica que el parametro que enviamos es obligatorio
-@app.post(path="/person/new",response_model=PersonBase,response_model_exclude='password',status_code=status.HTTP_201_CREATED)
+@app.post(path="/person/new",response_model=PersonBase,response_model_exclude='password',status_code=status.HTTP_201_CREATED,tags=["Persons"], summary="Create Person in the app")
 def create_person(person: PersonBase  = Body(...)):
-     return person
+    """Create Person
+    This path operation creates a person in the app and save de information in the database
+    Parameter:
+        Request body parameter:
+        **person: Person** -> A person model eith firstname, lastname, age,haircolor, marital status
+
+    Returns:
+       Person model with firstname, lastname,age,haircolor and marital  status
+    """
+    return person
  
  
 #Valiciones: QueryParameters
 
-@app.get(path="/person/detail",status_code=status.HTTP_200_OK)
+@app.get(path="/person/detail",status_code=status.HTTP_200_OK,tags=["Persons"],deprecated=True)
 def show_person(name:Optional[str] = Query(None,min_length=1,max_length= 50,
                 title="Person Name", description="This is the persona name. Its between 1 and 50 characters"),
                 example="Christian",
                 age: str = Query(..., title="Person Age",
                                  description="This is the person age its Required",
                                  example=1)):
+    """Show Person
+    this path operation gets a person on the database and show his information in the app
+
+    Args:
+        person name (persona name Its between 1 and 50 characters").
+        person age(must be greater than 0) 
+
+    Returns:
+        retorna un diccionario con el nombre y edad de la persona
+    """
     return {name:age}
 
 #validaciones: Path paramaeters
 persons = [1,2,3,4,5]
-@app.get("/person/detail/{person_id}")
+@app.get("/person/detail/{person_id}",tags=["Persons"])
 def show_person(person_id:int = Path(..., gt=0, title= "Person Id",
                     description= "This is the Person Id its Required",
                     example=110)):
@@ -91,7 +110,7 @@ def show_person(person_id:int = Path(..., gt=0, title= "Person Id",
     return {person_id:"It Exist!"}
  
  
-@app.put("/person/{person_id}")
+@app.put("/person/{person_id}",tags=["Persons"])
 def update_person(
     person_id: int = Path(...,
                           title="Person Id",
@@ -106,14 +125,14 @@ def update_person(
 
 #Forms
 @app.post(path="/login", response_model=LoginOut,
-          status_code=status.HTTP_200_OK)
+          status_code=status.HTTP_200_OK,tags=["Login","Persons"])
 def login(username:str = Form(...),password: str =Form(...)):
     return LoginOut(username=username)
 
 
 
 #Cookies and headers parameters
-@app.post(path="/contact",status_code=status.HTTP_200_OK)
+@app.post(path="/contact",status_code=status.HTTP_200_OK,tags=["Contact"])
 def contact(first_name:str = Form(...,max_length=25,min_length=1),
             last_name: str =Form(...,max_length=25,min_length=1),
             email:str =EmailStr(...),
@@ -125,7 +144,7 @@ def contact(first_name:str = Form(...,max_length=25,min_length=1),
 
 #Files
 
-@app.post(path="/post-iamge")
+@app.post(path="/post-iamge",tags=["Image"])
 #si importamos list desde el modulo typing podriamos cargar varias imagenes al mismo timepo
 # def post_image(images: List[UploadFile] = File(...)):
 #   pass
